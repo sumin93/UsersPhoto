@@ -1,20 +1,15 @@
 package ru.sumin.usersphoto
 
 import android.os.AsyncTask
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import androidx.loader.content.AsyncTaskLoader
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import org.json.JSONArray
-import org.json.JSONObject
 import ru.sumin.usersphoto.pojo.User
-import java.io.BufferedInputStream
 import java.io.BufferedReader
 import java.io.InputStreamReader
-import java.lang.StringBuilder
-import java.net.HttpURLConnection
 import java.net.URL
+import java.net.URLConnection
 
 class MainActivity : AppCompatActivity() {
 
@@ -35,11 +30,13 @@ class MainActivity : AppCompatActivity() {
         DownloadUsersTask().execute()
     }
 
-    inner class DownloadUsersTask: AsyncTask<Void, Void, List<User>>() {
+    inner class DownloadUsersTask : AsyncTask<Void, Void, List<User>>() {
         override fun doInBackground(vararg p0: Void?): List<User> {
             return try {
                 val urlConnection = URL(LOAD_USERS_URL).openConnection()
-                val inputStreamReader = BufferedReader(InputStreamReader(urlConnection.getInputStream()))
+                val inputStreamReader = BufferedReader(
+                    InputStreamReader(urlConnection.getInputStream())
+                )
                 val builder = StringBuilder()
                 var line = inputStreamReader.readLine()
                 while (line != null) {
