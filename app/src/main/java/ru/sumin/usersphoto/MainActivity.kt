@@ -9,7 +9,6 @@ import ru.sumin.usersphoto.pojo.User
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.URL
-import java.net.URLConnection
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,10 +26,13 @@ class MainActivity : AppCompatActivity() {
             val intent = PhotosActivity.newIntent(this, it.id)
             startActivity(intent)
         }
-        DownloadUsersTask().execute()
+        DownloadUsersTask(mapper, adapter).execute()
     }
 
-    inner class DownloadUsersTask : AsyncTask<Void, Void, List<User>>() {
+    class DownloadUsersTask(
+        private val mapper: Mapper,
+        private val adapter: UsersAdapter
+    ) : AsyncTask<Void, Void, List<User>>() {
         override fun doInBackground(vararg p0: Void?): List<User> {
             return try {
                 val urlConnection = URL(LOAD_USERS_URL).openConnection()

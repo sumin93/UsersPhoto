@@ -26,10 +26,14 @@ class PhotosActivity : AppCompatActivity() {
         recyclerViewPhotos = findViewById(R.id.recyclerViewPhotos)
         recyclerViewPhotos.adapter = adapter
         val id = intent.getIntExtra(EXTRA_USER_ID, -1)
-        DownloadPhotosTask(id).execute()
+        DownloadPhotosTask(id, adapter, mapper).execute()
     }
 
-    inner class DownloadPhotosTask(private val userId: Int) : AsyncTask<Void, Void, List<Photo>>() {
+    class DownloadPhotosTask(
+        private val userId: Int,
+        private val adapter: PhotosAdapter,
+        private val mapper: Mapper
+    ) : AsyncTask<Void, Void, List<Photo>>() {
         override fun doInBackground(vararg p0: Void?): List<Photo> {
             return try {
                 val albumList = loadAlbums(userId)
@@ -45,45 +49,45 @@ class PhotosActivity : AppCompatActivity() {
             if (result == null) return
             adapter.photos = result
         }
-    }
 
-    private fun loadAlbums(userId: Int): List<Album> {
-        val url = URL("$LOAD_ALBUMS_URL?${Album.KEY_USER_ID}=$userId")
-        val urlConnection = url.openConnection()
-        val inputStreamReader = BufferedReader(
-            InputStreamReader(urlConnection.getInputStream())
-        )
-        val builder = StringBuilder()
-        var line = inputStreamReader.readLine()
-        while (line != null) {
-            builder.append(line)
-            line = inputStreamReader.readLine()
-        }
-        return mapper.mapJsonToAlbumList(JSONArray(builder.toString()))
-    }
-
-    private fun loadPhotos(albumIds: List<Int>): List<Photo> {
-        val idsToPhotoUrlBuilder = StringBuilder()
-        for (i in albumIds.indices) {
-            if (i == 0) {
-                idsToPhotoUrlBuilder.append("?")
-            } else {
-                idsToPhotoUrlBuilder.append("&")
+        private fun loadAlbums(userId: Int): List<Album> {
+            val url = URL("$LOAD_ALBUMS_URL?${Album.KEY_USER_ID}=$userId")
+            val urlConnection = url.openConnection()
+            val inputStreamReader = BufferedReader(
+                InputStreamReader(urlConnection.getInputStream())
+            )
+            val builder = StringBuilder()
+            var line = inputStreamReader.readLine()
+            while (line != null) {
+                builder.append(line)
+                line = inputStreamReader.readLine()
             }
-            idsToPhotoUrlBuilder.append("${Photo.KEY_ALBUM_ID}=${albumIds[i]}")
+            return mapper.mapJsonToAlbumList(JSONArray(builder.toString()))
         }
-        val url = URL(LOAD_PHOTOS_URL + idsToPhotoUrlBuilder.toString())
-        val urlConnection = url.openConnection()
-        val inputStreamReader = BufferedReader(
-            InputStreamReader(urlConnection.getInputStream())
-        )
-        val builder = StringBuilder()
-        var line = inputStreamReader.readLine()
-        while (line != null) {
-            builder.append(line)
-            line = inputStreamReader.readLine()
+
+        private fun loadPhotos(albumIds: List<Int>): List<Photo> {
+            val idsToPhotoUrlBuilder = StringBuilder()
+            for (i in albumIds.indices) {
+                if (i == 0) {
+                    idsToPhotoUrlBuilder.append("?")
+                } else {
+                    idsToPhotoUrlBuilder.append("&")
+                }
+                idsToPhotoUrlBuilder.append("${Photo.KEY_ALBUM_ID}=${albumIds[i]}")
+            }
+            val url = URL(LOAD_PHOTOS_URL + idsToPhotoUrlBuilder.toString())
+            val urlConnection = url.openConnection()
+            val inputStreamReader = BufferedReader(
+                InputStreamReader(urlConnection.getInputStream())
+            )
+            val builder = StringBuilder()
+            var line = inputStreamReader.readLine()
+            while (line != null) {
+                builder.append(line)
+                line = inputStreamReader.readLine()
+            }
+            return mapper.mapJsonToPhotoList(JSONArray(builder.toString()))
         }
-        return mapper.mapJsonToPhotoList(JSONArray(builder.toString()))
     }
 
     companion object {
