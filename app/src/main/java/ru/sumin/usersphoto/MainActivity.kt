@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.loader.content.AsyncTaskLoader
+import androidx.recyclerview.widget.RecyclerView
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.sumin.usersphoto.pojo.User
@@ -18,10 +19,15 @@ import java.net.URL
 class MainActivity : AppCompatActivity() {
 
     private val mapper = Mapper()
+    private val adapter = UsersAdapter()
+
+    private lateinit var recyclerViewUsers: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        recyclerViewUsers = findViewById(R.id.recyclerViewUsers)
+        recyclerViewUsers.adapter = adapter
         DownloadUsersTask().execute()
     }
 
@@ -45,9 +51,7 @@ class MainActivity : AppCompatActivity() {
         override fun onPostExecute(result: List<User>?) {
             super.onPostExecute(result)
             if (result == null) return
-            for (user in result) {
-                println(user)
-            }
+            adapter.users = result
         }
     }
 
