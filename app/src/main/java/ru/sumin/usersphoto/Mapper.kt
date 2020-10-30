@@ -8,9 +8,8 @@ import ru.sumin.usersphoto.pojo.User
 
 class Mapper {
 
-    fun mapJsonToUserList(jsonObject: JSONObject): List<User> {
+    fun mapJsonToUserList(jsonArray: JSONArray): List<User> {
         val users = mutableListOf<User>()
-        val jsonArray = JSONArray(jsonObject)
         for (i in 0 until jsonArray.length()) {
             val json: JSONObject = jsonArray.getJSONObject(i)
             val id = json.getInt(User.KEY_ID)
@@ -21,9 +20,8 @@ class Mapper {
         return users
     }
 
-    fun mapJsonToPhotoList(jsonObject: JSONObject): List<Photo> {
+    fun mapJsonToPhotoList(jsonArray: JSONArray): List<Photo> {
         val photos = mutableListOf<Photo>()
-        val jsonArray = JSONArray(jsonObject)
         for (i in 0 until jsonArray.length()) {
             val json: JSONObject = jsonArray.getJSONObject(i)
             val id = json.getInt(Photo.KEY_ID)
@@ -36,9 +34,8 @@ class Mapper {
         return photos
     }
 
-    fun mapJsonToAlbumList(jsonObject: JSONObject): List<Album> {
+    fun mapJsonToAlbumList(jsonArray: JSONArray): List<Album> {
         val albums = mutableListOf<Album>()
-        val jsonArray = JSONArray(jsonObject)
         for (i in 0 until jsonArray.length()) {
             val json: JSONObject = jsonArray.getJSONObject(i)
             val userId = json.getInt(Album.KEY_USER_ID)
