@@ -15,6 +15,8 @@ class UsersAdapter : RecyclerView.Adapter<UsersAdapter.UsersViewHolder>() {
             notifyDataSetChanged()
         }
 
+    var onUserClickListener: ((User) -> Unit)? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UsersViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(
             R.layout.user_item,
@@ -30,11 +32,14 @@ class UsersAdapter : RecyclerView.Adapter<UsersAdapter.UsersViewHolder>() {
 
     override fun getItemCount(): Int = users.size
 
-    class UsersViewHolder(val itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class UsersViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val nameTextView = itemView.findViewById<TextView>(R.id.textViewUserName)
 
         fun bind(user: User) {
             nameTextView.text = user.name
+            itemView.setOnClickListener {
+                onUserClickListener?.invoke(user)
+            }
         }
     }
 }
