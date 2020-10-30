@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
 import org.json.JSONArray
 import ru.sumin.usersphoto.pojo.Album
 import ru.sumin.usersphoto.pojo.Photo
@@ -15,12 +16,16 @@ import java.net.URL
 class PhotosActivity : AppCompatActivity() {
 
     private val mapper = Mapper()
+    private val adapter = PhotosAdapter()
+
+    private lateinit var recyclerViewPhotos: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_photos)
+        recyclerViewPhotos = findViewById(R.id.recyclerViewPhotos)
+        recyclerViewPhotos.adapter = adapter
         val id = intent.getIntExtra(EXTRA_USER_ID, -1)
-        println("USER_ID $id")
         DownloadPhotosTask(id).execute()
     }
 
@@ -38,7 +43,7 @@ class PhotosActivity : AppCompatActivity() {
         override fun onPostExecute(result: List<Photo>?) {
             super.onPostExecute(result)
             if (result == null) return
-            println(result)
+            adapter.photos = result
         }
     }
 
